@@ -1,4 +1,3 @@
-// module.ts
 import { defineNuxtModule, addComponentsDir, addPlugin, createResolver } from '@nuxt/kit'
 
 export interface ModuleOptions {
@@ -13,12 +12,11 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     defaultHeight: 256,
   },
-  setup (_options, nuxt) {
+  setup (options: ModuleOptions, nuxt: any) {
     const r = createResolver(import.meta.url)
 
     // vue-echarts + theme plugins
     addPlugin(r.resolve('./runtime/plugins/vue-echarts'))
-    addPlugin(r.resolve('./runtime/plugins/echarts.theme.client'))
 
     // graph components
     addComponentsDir({

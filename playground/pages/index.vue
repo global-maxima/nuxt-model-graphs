@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import ModelGraphRenderer from '../../src/runtime/components/graphs/ModelGraphRenderer.vue'
 import type {
   ModelGraphProps,
