@@ -17,7 +17,7 @@ Reusable Nuxt module providing typed graph components (line, bar, scatter) and a
 ## **Installation**
 
 ```bash
-npm install git+ssh://git@github.com/your-org/nuxt-model-graphs.git
+npm install https://github.com/global-maxima/nuxt-model-graphs.git
 # or pnpm / yarn equivalent
 ```
 
