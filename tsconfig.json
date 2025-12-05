@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "#modelGraph": ["./src/runtime/types/modelGraph"]
+    }
+  },
+  "exclude": ["node_modules", ".nuxt", "dist"]
+}
