@@ -5,10 +5,11 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import type { DataSeries, ModelGraphProps } from "../../types/modelGraph"
+import { EChartsOption } from 'echarts'
 
 const props = defineProps<{ model: ModelGraphProps; series: DataSeries[] }>()
 
-const chartOptions = computed(() => ({
+const chartOptions = computed<EChartsOption>(() => ({
   tooltip: {},
   grid: {
     top: 16,
@@ -22,7 +23,13 @@ const chartOptions = computed(() => ({
     data: props.series[0]?.data.map((point) => point.x),
   },
   yAxis: {
-    type: "value",
+    type: "value", 
+    splitLine: {
+      lineStyle: {
+        type: 'dashed',
+        opacity: 0.5,
+      },
+    },
   },
   series: props.series.map((s) => ({
     type: "bar",

@@ -5,6 +5,7 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import type { DataSeries, ModelGraphProps } from "../../types/modelGraph"
+import { EChartsOption } from 'echarts'
 
 const props = defineProps<{ model: ModelGraphProps; series: DataSeries[] }>()
 
@@ -23,7 +24,7 @@ const categoryValues = computed(() => {
   return Array.from(values)
 })
 
-const chartOptions = computed(() => {
+const chartOptions = computed<EChartsOption>(() => {
   const useCategory = !isNumericXAxis.value
 
   return {
@@ -31,7 +32,13 @@ const chartOptions = computed(() => {
     xAxis: useCategory
       ? { type: "category", data: categoryValues.value }
       : { type: "value" },
-    yAxis: { type: "value" },
+    yAxis: { type: "value",splitLine: {
+      lineStyle: {
+        type: 'dashed',
+        opacity: 0.5,
+      },
+    }
+   },
     series: props.series.map((s) => ({
       type: "scatter",
       name: s.label,
