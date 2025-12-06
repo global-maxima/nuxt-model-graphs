@@ -2,6 +2,10 @@
   "name": "nuxt-model-graphs",
   "version": "0.0.1",
   "type": "module",
+  "main": "./src/module.ts",
+  "exports": {
+    ".": "./src/module.ts"
+  },
   "scripts": {
     "dev": "npx nuxi dev playground",
     "build": "npx nuxi build playground"
