@@ -4,6 +4,7 @@
 
 <script setup>
 import { computed } from "vue";
+import { EChartsOption } from "echarts";
 const props = defineProps({
   model: { type: Object, required: true },
   series: { type: Array, required: true }
@@ -22,7 +23,13 @@ const chartOptions = computed(() => ({
     data: props.series[0]?.data.map((point) => point.x)
   },
   yAxis: {
-    type: "value"
+    type: "value",
+    splitLine: {
+      lineStyle: {
+        type: "dashed",
+        opacity: 0.5
+      }
+    }
   },
   series: props.series.map((s) => ({
     type: "line",

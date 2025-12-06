@@ -4,6 +4,7 @@
 
 <script setup>
 import { computed } from "vue";
+import { EChartsOption } from "echarts";
 const props = defineProps({
   model: { type: Object, required: true },
   series: { type: Array, required: true }
@@ -26,7 +27,15 @@ const chartOptions = computed(() => {
   return {
     tooltip: {},
     xAxis: useCategory ? { type: "category", data: categoryValues.value } : { type: "value" },
-    yAxis: { type: "value" },
+    yAxis: {
+      type: "value",
+      splitLine: {
+        lineStyle: {
+          type: "dashed",
+          opacity: 0.5
+        }
+      }
+    },
     series: props.series.map((s) => ({
       type: "scatter",
       name: s.label,
