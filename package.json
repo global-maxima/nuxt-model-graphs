@@ -2,23 +2,47 @@
   "name": "nuxt-model-graphs",
   "version": "0.0.1",
   "type": "module",
-  "main": "./src/module.ts",
+  "main": "./dist/module.mjs",
   "exports": {
-    ".": "./src/module.ts"
+    ".": {
+      "types": "./dist/types.d.mts",
+      "import": "./dist/module.mjs"
+    }
   },
+  "typesVersions": {
+    "*": {
+      ".": [
+        "./dist/types.d.mts"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "prepack": "nuxt-module-build build",
     "dev": "npx nuxi dev playground",
+    "dev:build": "npx nuxi build playground",
+    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
     "build": "npx nuxi build playground"
   },
   "devDependencies": {
+    "@nuxt/module-builder": "^1.0.2",
+    "@nuxt/ui": "^4.2.1",
     "autoprefixer": "^10.4.22",
-    "nuxt": "latest",
+    "nuxt": "^4.2.1",
     "postcss": "^8.5.6",
-    "typescript": "latest"
+    "typescript": "^5.9.3",
+    "vue-tsc": "3.1.6"
   },
   "dependencies": {
-    "vue": "latest",
     "echarts": "^6.0.0",
     "vue-echarts": "^8.0.1"
+  },
+  "peerDependencies": {
+    "@nuxt/kit": "^4.0.0",
+    "@nuxt/ui": "^4.0.0",
+    "nuxt": "^4.0.0",
+    "vue": "^3.5.0"
   }
 }
