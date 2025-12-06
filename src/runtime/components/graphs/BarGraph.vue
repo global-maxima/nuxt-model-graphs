@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import type { DataSeries, ModelGraphProps } from "../../types/modelGraph"
-import { EChartsOption } from 'echarts'
+import type { EChartsOption } from 'echarts'
 
 const props = defineProps<{ model: ModelGraphProps; series: DataSeries[] }>()
 
