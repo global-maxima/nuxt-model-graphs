@@ -4,7 +4,6 @@
 
 <script setup>
 import { computed } from "vue";
-import { EChartsOption } from "echarts";
 const props = defineProps({
   model: { type: Object, required: true },
   series: { type: Array, required: true }
