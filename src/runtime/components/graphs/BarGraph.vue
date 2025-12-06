@@ -10,6 +10,13 @@ const props = defineProps<{ model: ModelGraphProps; series: DataSeries[] }>()
 
 const chartOptions = computed(() => ({
   tooltip: {},
+  grid: {
+    top: 16,
+    bottom: 24,
+    left: 40,
+    right: 8,
+    containLabel: true,
+  },
   xAxis: {
     type: "category",
     data: props.series[0]?.data.map((point) => point.x),
