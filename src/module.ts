@@ -47,8 +47,10 @@ export default defineNuxtModule<ModuleOptions>({
       pathPrefix: false,
     })
 
-    // 4. Register Vue-Echarts plugin
-    addPlugin(resolver.resolve(runtimeDir, 'plugins/vue-echarts'))
+    // 4. Register Vue-Echarts plugin (includes SSR-friendly stub)
+    addPlugin({
+      src: resolver.resolve(runtimeDir, 'plugins/vue-echarts'),
+    })
 
     // 5. Setup Alias for internal imports
     nuxt.options.alias['#nuxt-model-graphs/runtime'] = runtimeDir
