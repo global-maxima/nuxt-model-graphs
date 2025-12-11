@@ -4,12 +4,10 @@
 
 <script setup>
 import { computed } from "vue";
-const props = withDefaults(defineProps({
+const props = defineProps({
   model: { type: Object, required: true },
   series: { type: Array, required: true },
-  showLegend: { type: Boolean, required: false }
-}), {
-  showLegend: void 0
+  showLegend: { type: Boolean, required: false, default: void 0 }
 });
 const chartOptions = computed(() => {
   const shouldShowLegend = props.showLegend ?? (Array.isArray(props.series) && props.series.length > 1);

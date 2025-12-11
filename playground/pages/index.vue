@@ -5,6 +5,7 @@ import type {
   DataSeries,
   AvailableGraphType,
 } from '#modelGraph'
+import { ref } from 'vue'
 
 // Minimal valid ModelGraphProps
 const model: ModelGraphProps = {
