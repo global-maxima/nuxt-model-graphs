@@ -1,18 +1,20 @@
 <template>
-  <VChart :option="chartOptions" autoresize style="width:100%; height:100%" />
+  <VChart :option="chartOptions" autoresize style="width: 100%; height: 100%" />
 </template>
 
 <script setup>
 import { computed } from "vue";
 const props = defineProps({
-  axes: { type: Object, required: false },
-  series: { type: Array, required: true },
+  chartData: { type: Object, required: true },
   encoding: { type: Object, required: false, default: () => ({}) }
 });
 const chartOptions = computed(() => {
-  const showLegend = props.encoding?.showLegend ?? props.series.length > 1;
+  const { categories, series, xLabel, yLabel } = props.chartData;
+  const showLegend = props.encoding?.showLegend ?? series.length > 1;
   return {
-    tooltip: {},
+    tooltip: {
+      trigger: "axis"
+    },
     legend: showLegend ? {
       top: 0,
       type: "scroll",
@@ -26,13 +28,15 @@ const chartOptions = computed(() => {
       containLabel: true
     },
     xAxis: {
-      type: props.axes?.x?.type ?? "category",
-      data: props.series[0]?.data.map((d) => d.dimension),
-      name: props.axes?.x?.label
+      type: props.encoding?.xAxis?.type ?? "category",
+      data: categories,
+      name: xLabel,
+      nameLocation: "center",
+      nameGap: 25
     },
     yAxis: {
-      type: props.axes?.y?.type ?? "value",
-      name: props.axes?.y?.label,
+      type: props.encoding?.yAxis?.type ?? "value",
+      name: yLabel,
       splitLine: {
         lineStyle: {
           type: "dashed",
@@ -40,10 +44,11 @@ const chartOptions = computed(() => {
         }
       }
     },
-    series: props.series.map((s) => ({
+    series: series.map((s) => ({
       type: "bar",
       name: s.label,
-      data: s.data.map((d) => d.value)
+      data: s.data,
+      itemStyle: s.color ? { color: s.color } : void 0
     }))
   };
 });

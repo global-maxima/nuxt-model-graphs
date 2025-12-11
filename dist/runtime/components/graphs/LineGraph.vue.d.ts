@@ -1,6 +1,12 @@
-import type { UnivariateGraphProps } from "../../types/modelGraph.js";
-declare const __VLS_export: import("vue").DefineComponent<UnivariateGraphProps, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<UnivariateGraphProps> & Readonly<{}>, {
-    readonly encoding: import("../../types/modelGraph.js").VisualEncoding;
+import type { VisualEncoding, ChartData2D } from '../../types/chart.js';
+type __VLS_Props = {
+    chartData: ChartData2D;
+    encoding?: VisualEncoding;
+    areaFill?: boolean;
+};
+declare const __VLS_export: import("vue").DefineComponent<__VLS_Props, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<__VLS_Props> & Readonly<{}>, {
+    encoding: VisualEncoding;
+    areaFill: boolean;
 }, {}, {}, {}, string, import("vue").ComponentProvideOptions, false, {}, any>;
 declare const _default: typeof __VLS_export;
 export default _default;

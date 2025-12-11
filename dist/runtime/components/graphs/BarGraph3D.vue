@@ -1,40 +1,23 @@
 <template>
-  <VChart :option="chartOptions" autoresize style="width:100%; height:100%" />
+  <VChart :option="chartOptions" autoresize style="width: 100%; height: 100%" />
 </template>
 
 <script setup>
 import { computed } from "vue";
 const props = defineProps({
-  axes: { type: Object, required: false },
-  series: { type: Array, required: true },
+  chartData: { type: Object, required: true },
   encoding: { type: Object, required: false, default: () => ({}) }
-});
-const axisCategories = computed(() => {
-  const xSet = /* @__PURE__ */ new Set();
-  const ySet = /* @__PURE__ */ new Set();
-  for (const s of props.series) {
-    for (const d of s.data) {
-      xSet.add(d.dimensionX);
-      ySet.add(d.dimensionY);
-    }
-  }
-  return {
-    x: Array.from(xSet),
-    y: Array.from(ySet)
-  };
 });
 const maxValue = computed(() => {
   let max = 0;
-  for (const s of props.series) {
-    for (const d of s.data) {
-      if (d.value > max) max = d.value;
-    }
+  for (const [, , value] of props.chartData.data) {
+    if (value > max) max = value;
   }
   return max;
 });
 const chartOptions = computed(() => {
-  const { x: xCats, y: yCats } = axisCategories.value;
-  const colors = props.encoding?.colorScale?.colors ?? [
+  const { xCategories, yCategories, data, xLabel, yLabel, zLabel } = props.chartData;
+  const defaultColors = [
     "#313695",
     "#4575b4",
     "#74add1",
@@ -47,16 +30,7 @@ const chartOptions = computed(() => {
     "#d73027",
     "#a50026"
   ];
-  const data3D = [];
-  for (const s of props.series) {
-    for (const d of s.data) {
-      data3D.push([
-        xCats.indexOf(d.dimensionX),
-        yCats.indexOf(d.dimensionY),
-        d.value
-      ]);
-    }
-  }
+  const colors = props.encoding?.colorScale?.colors ?? defaultColors;
   return {
     tooltip: {},
     visualMap: {
@@ -65,17 +39,17 @@ const chartOptions = computed(() => {
     },
     xAxis3D: {
       type: "category",
-      data: xCats,
-      name: props.axes?.x?.label
+      data: xCategories,
+      name: xLabel
     },
     yAxis3D: {
       type: "category",
-      data: yCats,
-      name: props.axes?.y?.label
+      data: yCategories,
+      name: yLabel
     },
     zAxis3D: {
       type: "value",
-      name: props.axes?.z?.label
+      name: zLabel
     },
     grid3D: {
       boxWidth: 200,
@@ -85,11 +59,13 @@ const chartOptions = computed(() => {
         ambient: { intensity: 0.3 }
       }
     },
-    series: [{
-      type: "bar3D",
-      data: data3D,
-      shading: "lambert"
-    }]
+    series: [
+      {
+        type: "bar3D",
+        data,
+        shading: "lambert"
+      }
+    ]
   };
 });
 </script>

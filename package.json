@@ -30,13 +30,13 @@
     "@nuxt/module-builder": "^1.0.2",
     "@nuxt/ui": "^4.2.1",
     "autoprefixer": "^10.4.22",
-    "defu": "^6.1.4",
     "nuxt": "^4.2.1",
     "postcss": "^8.5.6",
     "typescript": "^5.9.3",
     "vue-tsc": "3.1.6"
   },
   "dependencies": {
+    "defu": "^6.1.4",
     "echarts": "^6.0.0",
     "echarts-gl": "^2.0.9",
     "vue-echarts": "^8.0.1"
