@@ -5,29 +5,55 @@
 <script setup>
 import { computed } from "vue";
 const props = defineProps({
-  model: { type: Object, required: true },
-  series: { type: Array, required: true }
+  axes: { type: Object, required: false },
+  series: { type: Array, required: true },
+  encoding: { type: Object, required: false, default: () => ({}) }
 });
 const isNumericXAxis = computed(
   () => props.series.every(
-    (s) => s.data.every((p) => typeof p.x === "number" || Number.isFinite(Number(p.x)))
+    (s) => s.data.every(
+      (d) => typeof d.dimension === "number" || Number.isFinite(Number(d.dimension))
+    )
   )
 );
 const categoryValues = computed(() => {
   if (isNumericXAxis.value) return [];
   const values = /* @__PURE__ */ new Set();
-  props.series.forEach((s) => {
-    s.data.forEach((p) => values.add(String(p.x)));
-  });
+  for (const s of props.series) {
+    for (const d of s.data) {
+      values.add(String(d.dimension));
+    }
+  }
   return Array.from(values);
 });
 const chartOptions = computed(() => {
   const useCategory = !isNumericXAxis.value;
+  const showLegend = props.encoding?.showLegend ?? props.series.length > 1;
   return {
     tooltip: {},
-    xAxis: useCategory ? { type: "category", data: categoryValues.value } : { type: "value" },
+    legend: showLegend ? {
+      top: 0,
+      type: "scroll",
+      textStyle: { fontSize: 11 }
+    } : void 0,
+    grid: {
+      top: showLegend ? 36 : 16,
+      bottom: 24,
+      left: 40,
+      right: 8,
+      containLabel: true
+    },
+    xAxis: useCategory ? {
+      type: "category",
+      data: categoryValues.value,
+      name: props.axes?.x?.label
+    } : {
+      type: props.axes?.x?.type ?? "value",
+      name: props.axes?.x?.label
+    },
     yAxis: {
-      type: "value",
+      type: props.axes?.y?.type ?? "value",
+      name: props.axes?.y?.label,
       splitLine: {
         lineStyle: {
           type: "dashed",
@@ -38,9 +64,9 @@ const chartOptions = computed(() => {
     series: props.series.map((s) => ({
       type: "scatter",
       name: s.label,
-      data: s.data.map((p) => [
-        useCategory ? String(p.x) : Number(p.x),
-        p.y
+      data: s.data.map((d) => [
+        useCategory ? String(d.dimension) : Number(d.dimension),
+        d.value
       ])
     }))
   };

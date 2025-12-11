@@ -4,27 +4,19 @@
 
 <script setup lang="ts">
 import { computed } from "vue"
-import type { DataSeries, ModelGraphProps } from "../../types/modelGraph"
+import type { UnivariateGraphProps } from "../../types/modelGraph"
 import type { EChartsOption } from "echarts"
 
-const props = withDefaults(
-  defineProps<{
-    model: ModelGraphProps
-    series: DataSeries[]
-    showLegend?: boolean
-  }>(),
-  {
-    showLegend: undefined,
-  },
-)
+const props = withDefaults(defineProps<UnivariateGraphProps>(), {
+  encoding: () => ({}),
+})
 
 const chartOptions = computed<EChartsOption>(() => {
-  const shouldShowLegend =
-    props.showLegend ?? (Array.isArray(props.series) && props.series.length > 1)
+  const showLegend = props.encoding?.showLegend ?? props.series.length > 1
 
   return {
     tooltip: {},
-    legend: shouldShowLegend
+    legend: showLegend
       ? {
           top: 0,
           type: "scroll",
@@ -32,18 +24,20 @@ const chartOptions = computed<EChartsOption>(() => {
         }
       : undefined,
     grid: {
-      top: shouldShowLegend ? 36 : 16,
+      top: showLegend ? 36 : 16,
       bottom: 24,
       left: 40,
       right: 8,
       containLabel: true,
     },
     xAxis: {
-      type: "category",
-      data: props.series[0]?.data.map((point) => point.x),
+      type: props.axes?.x?.type ?? "category",
+      data: props.series[0]?.data.map((d) => d.dimension),
+      name: props.axes?.x?.label,
     },
     yAxis: {
-      type: "value",
+      type: props.axes?.y?.type ?? "value",
+      name: props.axes?.y?.label,
       splitLine: {
         lineStyle: {
           type: "dashed",
@@ -54,7 +48,7 @@ const chartOptions = computed<EChartsOption>(() => {
     series: props.series.map((s) => ({
       type: "bar",
       name: s.label,
-      data: s.data.map((p) => p.y),
+      data: s.data.map((d) => d.value),
     })),
   }
 })
