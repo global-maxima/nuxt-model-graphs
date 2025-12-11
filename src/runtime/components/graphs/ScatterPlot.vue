@@ -1,45 +1,41 @@
 <template>
-  <VChart :option="chartOptions" autoresize style="width:100%; height:100%" />
+  <VChart :option="chartOptions" autoresize style="width: 100%; height: 100%" />
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue"
-import type { UnivariateGraphProps, UnivariateDatum } from "../../types/modelGraph"
-import type { EChartsOption } from "echarts"
+import { computed } from 'vue'
+import type { EChartsOption } from 'echarts'
+import type { VisualEncoding,ChartData2D } from '../../types/chart'
 
-const props = withDefaults(defineProps<UnivariateGraphProps>(), {
-  encoding: () => ({}),
-})
+const props = withDefaults(
+  defineProps<{
+    chartData: ChartData2D
+    encoding?: VisualEncoding
+  }>(),
+  {
+    encoding: () => ({}),
+  }
+)
 
 const isNumericXAxis = computed(() =>
-  props.series.every((s) =>
-    s.data.every((d: UnivariateDatum) =>
-      typeof d.dimension === "number" || Number.isFinite(Number(d.dimension))
-    )
+  props.chartData.categories.every(
+    (c) => typeof c === 'number' || Number.isFinite(Number(c))
   )
 )
 
-const categoryValues = computed(() => {
-  if (isNumericXAxis.value) return []
-  const values = new Set<string>()
-  for (const s of props.series) {
-    for (const d of s.data) {
-      values.add(String(d.dimension))
-    }
-  }
-  return Array.from(values)
-})
-
 const chartOptions = computed<EChartsOption>(() => {
+  const { categories, series, xLabel, yLabel } = props.chartData
+  const showLegend = props.encoding?.showLegend ?? series.length > 1
   const useCategory = !isNumericXAxis.value
-  const showLegend = props.encoding?.showLegend ?? props.series.length > 1
 
   return {
-    tooltip: {},
+    tooltip: {
+      trigger: 'item',
+    },
     legend: showLegend
       ? {
           top: 0,
-          type: "scroll",
+          type: 'scroll',
           textStyle: { fontSize: 11 },
         }
       : undefined,
@@ -52,31 +48,34 @@ const chartOptions = computed<EChartsOption>(() => {
     },
     xAxis: useCategory
       ? {
-          type: "category",
-          data: categoryValues.value,
-          name: props.axes?.x?.label,
+          type: 'category',
+          data: categories,
+          name: xLabel,
+          nameLocation: 'center',
+          nameGap: 25,
         }
       : {
-          type: props.axes?.x?.type ?? "value",
-          name: props.axes?.x?.label,
+          type: props.encoding?.xAxis?.type ?? 'value',
+          name: xLabel,
         },
     yAxis: {
-      type: props.axes?.y?.type ?? "value",
-      name: props.axes?.y?.label,
+      type: props.encoding?.yAxis?.type ?? 'value',
+      name: yLabel,
       splitLine: {
         lineStyle: {
-          type: "dashed",
+          type: 'dashed',
           opacity: 0.5,
         },
       },
     },
-    series: props.series.map((s) => ({
-      type: "scatter",
+    series: series.map((s) => ({
+      type: 'scatter',
       name: s.label,
-      data: s.data.map((d) => [
-        useCategory ? String(d.dimension) : Number(d.dimension),
-        d.value,
+      data: s.data.map((val, idx) => [
+        useCategory ? categories[idx] : Number(categories[idx]),
+        val,
       ]),
+      itemStyle: s.color ? { color: s.color } : undefined,
     })),
   }
 })

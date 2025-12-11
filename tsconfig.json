@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
     "module": "esnext",
+    "lib": ["ESNext"],
     "moduleResolution": "bundler",
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "#modelGraph": ["./src/runtime/types/modelGraph"]
+      "#chart": ["./src/runtime/types/chart"]
     }
   },
   "exclude": ["node_modules", ".nuxt", "dist"]

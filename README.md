@@ -54,19 +54,6 @@ Graph components (`<LineGraph>`, `<BarGraph>`, `<ScatterPlot>`) are also availab
 
 ---
 
-## **Configuration (optional)**
-
-```ts
-export default defineNuxtConfig({
-  modules: ['nuxt-model-graphs'],
-  graphs: {
-    defaultHeight: 300,
-  },
-})
-```
-
----
-
 ## **Development**
 
 ```bash

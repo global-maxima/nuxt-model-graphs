@@ -1,151 +1,150 @@
 <script setup lang="ts">
-import ModelGraphRenderer from '../../src/runtime/components/graphs/ModelGraphRenderer.vue'
-import type {
-  ChartType,
-  UnivariateChartType,
-  BivariateChartType,
-  UnivariateSeries,
-  BivariateSeries,
-  BivariateDatum,
-} from '#modelGraph'
-import { univariate, bivariate, series } from '#modelGraph'
-import { ref, computed } from 'vue'
-
+import type { ChartSchema, DataRow } from '../../src/runtime/types/chart'
+import { useChartExplorer } from '../../src/runtime/composables/useChartExplorer'
 // ============================================================================
-// UNIVARIATE DATA (1 dimension → 1 value)
+// SCHEMA
 // ============================================================================
 
-const univariateData: UnivariateSeries[] = [
-  series('series-a', 'Series A', [
-    univariate('Jan', 10),
-    univariate('Feb', 18),
-    univariate('Mar', 25),
-    univariate('Apr', 15),
-    univariate('May', 30),
-  ]),
-  series('series-b', 'Series B', [
-    univariate('Jan', 7),
-    univariate('Feb', 12),
-    univariate('Mar', 17),
-    univariate('Apr', 10),
-    univariate('May', 21),
-  ]),
-]
+type Dim = 'month' | 'product'
+type Mea = 'sales' | 'profit'
 
-// ============================================================================
-// BIVARIATE DATA (2 dimensions → 1 value)
-// ============================================================================
-
-const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
-const hours = ['9am', '12pm', '3pm', '6pm']
-
-const bivariateData: BivariateSeries[] = [
-  series(
-    'activity',
-    'User Activity',
-    days.reduce<BivariateDatum[]>(
-      (acc, day) => [
-        ...acc,
-        ...hours.map((hour) =>
-          bivariate(day, hour, Math.floor(Math.random() * 20) + 1)
-        ),
-      ],
-      []
-    )
-  ),
-]
-
-// ============================================================================
-// CHART TYPE SELECTION
-// ============================================================================
-
-type ChartOption<T extends ChartType = ChartType> = {
-  label: string
-  value: T
-  category: 'univariate' | 'bivariate'
+const schema: ChartSchema<Dim, Mea> = {
+  dimensions: [
+    { id: 'month', label: 'Month' },
+    { id: 'product', label: 'Product Line' },
+  ],
+  measures: [
+    { id: 'sales', label: 'Revenue ($)' },
+    { id: 'profit', label: 'Profit ($)' },
+  ],
 }
 
-const chartOptions: ChartOption[] = [
-  { label: 'Line', value: 'lineGraph', category: 'univariate' },
-  { label: 'Bar', value: 'verticalBarGraph', category: 'univariate' },
-  { label: 'Scatter', value: 'scatterPlot', category: 'univariate' },
-  { label: '3D Bar', value: 'barGraph3D', category: 'bivariate' },
-]
+// ============================================================================
+// DATA
+// ============================================================================
 
-const selectedType = ref<ChartType>('lineGraph')
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May']
+const products = ['Widget', 'Gadget', 'Gizmo']
 
-const selectedCategory = computed(() =>
-  chartOptions.find((o) => o.value === selectedType.value)?.category ?? 'univariate'
-)
+const data: DataRow<Dim, Mea>[] = []
+for (const month of months) {
+  for (const product of products) {
+    data.push({
+      month,
+      product,
+      sales: Math.floor(Math.random() * 100) + 50,
+      profit: Math.floor(Math.random() * 30) + 10,
+    })
+  }
+}
 
-const isUnivariate = computed(() => selectedCategory.value === 'univariate')
+// ============================================================================
+// EXPLORER
+// ============================================================================
+
+const {
+  dimensionIds,
+  measureIds,
+  selectedDimensions,
+  selectedMeasures,
+  availableGraphKinds,
+  graphKind,
+  selection,
+  toggleDimension,
+  toggleMeasure,
+} = useChartExplorer(schema, {
+  defaultDimensions: ['month'],
+  defaultMeasures: ['sales'],
+})
 </script>
 
 <template>
   <div class="min-h-screen flex flex-col items-center gap-8 p-8 bg-slate-950 text-slate-100">
     <header class="max-w-3xl w-full flex flex-col gap-2">
-      <h1 class="text-2xl font-semibold">nuxt-model-graphs playground</h1>
+      <h1 class="text-2xl font-semibold">Chart Explorer Playground</h1>
       <p class="text-sm text-slate-400">
-        Switch graph types to verify the module wiring, ECharts plugin, and shared types.
+        Select dimensions and measures to explore the data. Available graph types update based on your selection.
       </p>
     </header>
 
     <section class="max-w-3xl w-full flex flex-col gap-4">
-      <!-- Chart type selector -->
+      <!-- Dimension picker -->
       <div class="flex items-center gap-3">
-        <span class="text-sm text-slate-300">Graph type:</span>
+        <span class="text-sm text-slate-300 w-24">Dimensions:</span>
         <div class="inline-flex rounded border border-slate-700 overflow-hidden">
           <button
-            v-for="t in chartOptions"
-            :key="t.value"
+            v-for="id in dimensionIds"
+            :key="id"
             class="px-3 py-1.5 text-xs transition-colors"
-            :class="selectedType === t.value
-              ? 'bg-slate-200 text-slate-900'
+            :class="selectedDimensions.includes(id)
+              ? 'bg-blue-600 text-white'
               : 'bg-slate-900 text-slate-300 hover:bg-slate-800'"
-            @click="selectedType = t.value"
+            @click="toggleDimension(id)"
           >
-            {{ t.label }}
+            {{ id }}
           </button>
         </div>
       </div>
 
-      <!-- Data category indicator -->
-      <div class="text-xs text-slate-500">
-        Data shape:
-        <span class="text-slate-300 font-mono">
-          {{ isUnivariate ? 'UnivariateDatum { dimension, value }' : 'BivariateDatum { dimensionX, dimensionY, value }' }}
+      <!-- Measure picker -->
+      <div class="flex items-center gap-3">
+        <span class="text-sm text-slate-300 w-24">Measures:</span>
+        <div class="inline-flex rounded border border-slate-700 overflow-hidden">
+          <button
+            v-for="id in measureIds"
+            :key="id"
+            class="px-3 py-1.5 text-xs transition-colors"
+            :class="selectedMeasures.includes(id)
+              ? 'bg-green-600 text-white'
+              : 'bg-slate-900 text-slate-300 hover:bg-slate-800'"
+            @click="toggleMeasure(id)"
+          >
+            {{ id }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Graph kind picker -->
+      <div class="flex items-center gap-3">
+        <span class="text-sm text-slate-300 w-24">Chart type:</span>
+        <div class="inline-flex rounded border border-slate-700 overflow-hidden">
+          <button
+            v-for="kind in availableGraphKinds"
+            :key="kind"
+            class="px-3 py-1.5 text-xs transition-colors"
+            :class="graphKind === kind
+              ? 'bg-slate-200 text-slate-900'
+              : 'bg-slate-900 text-slate-300 hover:bg-slate-800'"
+            @click="graphKind = kind"
+          >
+            {{ kind }}
+          </button>
+        </div>
+        <span v-if="availableGraphKinds.length === 0" class="text-xs text-slate-500 italic">
+          Select at least one dimension and measure
         </span>
       </div>
 
-      <!-- Univariate charts -->
-      <ModelGraphRenderer
-        v-if="isUnivariate"
-        style="height: 300px"
-        :type="(selectedType as UnivariateChartType)"
-        :series="univariateData"
-      />
+      <!-- Selection info -->
+      <div class="text-xs text-slate-500 font-mono">
+        {{ selectedDimensions.length }} dim × {{ selectedMeasures.length }} mea
+        → {{ availableGraphKinds.length }} chart types available
+      </div>
 
-      <!-- Bivariate charts -->
-      <ModelGraphRenderer
-        v-else
-        style="height: 400px"
-        :type="(selectedType as BivariateChartType)"
-        :series="bivariateData"
+      <!-- Chart -->
+      <ChartRenderer
+        class="bg-slate-900 border border-slate-700 rounded-md p-4"
+        :data="data"
+        :schema="schema"
+        :selection="selection"
+        :graph-kind="graphKind"
       />
     </section>
 
-    <section class="max-w-3xl w-full text-xs text-slate-500 space-y-2">
-      <p v-if="isUnivariate">
-        <strong class="text-slate-400">Univariate data:</strong>
-        months on X axis, numeric values on Y axis. Two series shown.
-      </p>
-      <p v-else>
-        <strong class="text-slate-400">Bivariate data:</strong>
-        days × hours grid with random activity values. Color encodes intensity.
-      </p>
-      <p class="text-slate-600">
-        If all chart modes render correctly with tooltips working, the module and type system are correctly wired.
-      </p>
+    <section class="max-w-3xl w-full text-xs text-slate-500 space-y-1">
+      <p><strong class="text-slate-400">1 dimension:</strong> X axis categories</p>
+      <p><strong class="text-slate-400">2 dimensions:</strong> X axis + legend (2D) or X + Y axis (3D)</p>
+      <p><strong class="text-slate-400">Multiple measures:</strong> Multiple series on same chart</p>
     </section>
   </div>
 </template>
