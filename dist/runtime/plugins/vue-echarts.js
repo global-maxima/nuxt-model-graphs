@@ -17,7 +17,30 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     return;
   }
   console.log("[nuxt-model-graphs] registering VChart");
+  const [
+    { use },
+    charts,
+    components,
+    renderers,
+    { default: VueECharts }
+  ] = await Promise.all([
+    import("echarts/core"),
+    import("echarts/charts"),
+    import("echarts/components"),
+    import("echarts/renderers"),
+    import("vue-echarts")
+  ]);
+  use([
+    renderers.CanvasRenderer,
+    charts.BarChart,
+    charts.LineChart,
+    charts.ScatterChart,
+    components.GridComponent,
+    components.TooltipComponent,
+    components.LegendComponent,
+    components.DatasetComponent,
+    components.VisualMapComponent
+  ]);
   await import("echarts-gl");
-  const { default: VueECharts } = await import("vue-echarts");
   nuxtApp.vueApp.component("VChart", VueECharts);
 });
