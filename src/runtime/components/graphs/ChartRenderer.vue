@@ -6,6 +6,7 @@
       v-if="graphComponent && hasData"
       :chart-data="chartData"
       :encoding="encoding"
+      v-bind="graphProps"
       class="w-full h-full" 
     />
 
@@ -38,6 +39,7 @@ import {
 import LineGraph from './LineGraph.vue'
 import BarGraph from './BarGraph.vue'
 import BarGraph3D from './BarGraph3D.vue'
+import MatrixGraph from './MatrixGraph.vue'
 import ScatterPlot from './ScatterPlot.vue'
 import { useRuntimeConfig } from 'nuxt/app'
 
@@ -71,10 +73,15 @@ const graphComponentMap: Record<GraphKind, Component> = {
   scatter: ScatterPlot,
   area: LineGraph,
   bar3d: BarGraph3D,
-  heatmap: BarGraph3D,
+  matrix: MatrixGraph,
 }
 
 const graphComponent = computed(() => graphComponentMap[props.graphKind])
+const graphProps = computed(() =>
+  props.graphKind === 'area'
+    ? { areaFill: true }
+    : {}
+)
 
 // ============================================================================
 // SCHEMA HELPERS
@@ -110,8 +117,8 @@ function meaLabel(id: M): string {
 // DATA TRANSFORMATION
 // ============================================================================
 
-const is3D = computed(() =>
-  props.graphKind === 'bar3d' || props.graphKind === 'heatmap'
+const usesGridData = computed(() =>
+  props.graphKind === 'bar3d' || props.graphKind === 'matrix'
 )
 
 const chartData = computed<ChartData>(() => {
@@ -122,7 +129,7 @@ const chartData = computed<ChartData>(() => {
     return { mode: '2d', categories: [], series: [] }
   }
 
-  if (is3D.value && dimensions.length >= 2) {
+  if (usesGridData.value && dimensions.length >= 2) {
     return build3DData(data, dimensions, measures[0])
   }
 

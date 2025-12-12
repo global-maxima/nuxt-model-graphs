@@ -40,6 +40,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     charts.BarChart,
     charts.LineChart,
     charts.ScatterChart,
+    charts.HeatmapChart,
     components.GridComponent,
     components.TooltipComponent,
     components.LegendComponent,
@@ -47,7 +48,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     components.VisualMapComponent,
   ])
 
-  // Register 3D extensions (bar3D / heatmap) via side effect
+  // Register 3D extensions (bar3D) via side effect
   await import('echarts-gl')
 
   nuxtApp.vueApp.component('VChart', VueECharts)

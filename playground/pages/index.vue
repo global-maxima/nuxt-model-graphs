@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ChartSchema, DataRow } from '../../src/runtime/types/chart'
+import type { ChartSchema, DataRow, GraphKind } from '../../src/runtime/types/chart'
 import { useChartExplorer } from '../../src/runtime/composables/useChartExplorer'
 // ============================================================================
 // SCHEMA
@@ -37,6 +37,41 @@ for (const month of months) {
     })
   }
 }
+
+// Matrix demo data (lower-triangular heatmap)
+type MatrixDim = 'x' | 'y'
+type MatrixMea = 'value'
+
+const matrixSchema: ChartSchema<MatrixDim, MatrixMea> = {
+  dimensions: [
+    { id: 'x', label: 'X Axis' },
+    { id: 'y', label: 'Y Axis' },
+  ],
+  measures: [{ id: 'value', label: 'Value' }],
+}
+
+const matrixData: DataRow<MatrixDim, MatrixMea>[] = []
+const xCnt = 8
+const yCnt = xCnt
+
+for (let i = 1; i <= xCnt; ++i) {
+  for (let j = 1; j <= yCnt; ++j) {
+    if (i >= j) {
+      matrixData.push({
+        x: `X${i}`,
+        y: `Y${j}`,
+        value: i === j ? 1 : Math.random() * 2 - 1,
+      })
+    }
+  }
+}
+
+const matrixSelection = {
+  dimensions: ['x', 'y'] as const,
+  measures: ['value'] as const,
+}
+
+const matrixGraphKind: GraphKind = 'matrix'
 
 // ============================================================================
 // EXPLORER
@@ -141,10 +176,29 @@ const {
       />
     </section>
 
+    <section class="max-w-3xl w-full flex flex-col gap-3">
+      <div class="flex flex-col gap-1">
+        <h2 class="text-lg font-semibold text-slate-100">Matrix heatmap demo</h2>
+        <p class="text-sm text-slate-400">
+          Lower-triangular matrix with a symmetric random field. Uses the new <code>matrix</code> graph kind (heatmap).
+        </p>
+      </div>
+
+      <ChartRenderer
+        class="bg-slate-900 border border-slate-700 rounded-md p-4"
+        :data="matrixData"
+        :schema="matrixSchema"
+        :selection="matrixSelection"
+        :graph-kind="matrixGraphKind"
+        :encoding="{ colorScale: { min: -1, max: 1 } }"
+      />
+    </section>
+
     <section class="max-w-3xl w-full text-xs text-slate-500 space-y-1">
       <p><strong class="text-slate-400">1 dimension:</strong> X axis categories</p>
       <p><strong class="text-slate-400">2 dimensions:</strong> X axis + legend (2D) or X + Y axis (3D)</p>
       <p><strong class="text-slate-400">Multiple measures:</strong> Multiple series on same chart</p>
+      <p><strong class="text-slate-400">Matrix (heatmap):</strong> 2 dimensions + 1 measure renders as a matrix heatmap</p>
     </section>
   </div>
 </template>

@@ -70,7 +70,7 @@ interface ChartSelection<D extends string, M extends string> {
 // GRAPH KINDS
 // ============================================================================
 
-type GraphKind = 'line' | 'bar' | 'scatter' | 'area' | 'bar3d' | 'heatmap'
+type GraphKind = 'line' | 'bar' | 'scatter' | 'area' | 'bar3d' | 'matrix'
 
 function getAvailableGraphKinds (
   dimCount: number,
@@ -84,7 +84,7 @@ function getAvailableGraphKinds (
   }
 
   if (dimCount === 2) {
-    if (measureCount === 1) return ['line', 'bar', 'scatter', 'bar3d', 'heatmap']
+    if (measureCount === 1) return ['line', 'bar', 'scatter', 'bar3d', 'matrix']
   }
 
   return ['bar']

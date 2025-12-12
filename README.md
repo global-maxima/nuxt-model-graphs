@@ -7,7 +7,7 @@ Schema-driven charting for Nuxt 4, powered by ECharts. Define dimensions and mea
 ## **What’s inside**
 
 - Schema/selection-first API with typed helpers (`ChartSchema`, `ChartSelection`, `GraphKind`, etc.) exposed via `#chart`
-- Single `<ChartRenderer>` that converts raw rows into the right series for `line`, `bar`, `area`, `scatter`, `bar3d`, or `heatmap`
+- Single `<ChartRenderer>` that converts raw rows into the right series for `line`, `bar`, `area`, `scatter`, `bar3d`, or `matrix` heatmaps
 - Auto-registered graph components and the bundled `<VChart>` plugin
 - `useChartExplorer` composable for UI-driven dimension/measure selection
 - Runtime config (`graphs.defaultHeight`) to control default renderer height
@@ -75,7 +75,7 @@ const graphKind: GraphKind = 'bar'
 </template>
 ```
 
-Components (`<LineGraph>`, `<BarGraph>`, `<ScatterPlot>`, `<BarGraph3D>`) remain available if you want to pass pre-built `chartData`, but `<ChartRenderer>` is the primary entry point.
+Components (`<LineGraph>`, `<BarGraph>`, `<ScatterPlot>`, `<BarGraph3D>`, `<MatrixGraph>`) remain available if you want to pass pre-built `chartData`, but `<ChartRenderer>` is the primary entry point.
 
 ---
 
