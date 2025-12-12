@@ -1,56 +1,97 @@
 # **nuxt-model-graphs**
 
-Reusable Nuxt module providing typed graph components (line, bar, scatter) and a unified renderer for visualizing model-driven data using ECharts. Designed for cross-app reuse with shared types, auto-registered components, and optional configuration.
+Schema-driven charting for Nuxt 4, powered by ECharts. Define dimensions and measures once, pick a graph kind, and let the renderer derive the right series/axes (including 3D) with shared, typed models.
 
 ---
 
-## **Features**
+## **What’s inside**
 
-- Auto-registered graph components  
-- Shared TypeScript models (`ModelGraphProps`, `DataSeries`, etc.)  
-- Unified `<ModelGraphRenderer>` that selects graph type at runtime  
-- ECharts `<VChart>` plugin included  
-- Lightweight, framework-conformant Nuxt 4 module  
+- Schema/selection-first API with typed helpers (`ChartSchema`, `ChartSelection`, `GraphKind`, etc.) exposed via `#chart`
+- Single `<ChartRenderer>` that converts raw rows into the right series for `line`, `bar`, `area`, `scatter`, `bar3d`, or `heatmap`
+- Auto-registered graph components and the bundled `<VChart>` plugin
+- `useChartExplorer` composable for UI-driven dimension/measure selection
+- Runtime config (`graphs.defaultHeight`) to control default renderer height
 
 ---
 
-## **Installation**
+## **Install**
 
 ```bash
-npm install https://github.com/global-maxima/nuxt-model-graphs.git
-# or pnpm / yarn equivalent
+pnpm add https://github.com/global-maxima/nuxt-model-graphs.git
+# or npm / yarn equivalent
 ```
 
-Add to `nuxt.config.ts`:
+Enable the module:
 
 ```ts
 export default defineNuxtConfig({
   modules: ['nuxt-model-graphs'],
+  graphs: {
+    defaultHeight: 256, // optional override
+  },
 })
 ```
 
 ---
 
-## **Usage**
+## **Quick start**
 
 ```vue
 <script setup lang="ts">
-import type { ModelGraphProps, DataSeries } from '#modelGraph'
+import type { ChartSchema, ChartSelection, DataRow, GraphKind } from '#chart'
 
-const model: ModelGraphProps = { /* ... */ }
-const series: DataSeries[] = [ /* ... */ ]
+type Dim = 'month' | 'channel'
+type Mea = 'revenue'
+
+const schema: ChartSchema<Dim, Mea> = {
+  dimensions: [
+    { id: 'month', label: 'Month' },
+    { id: 'channel', label: 'Channel' },
+  ],
+  measures: [{ id: 'revenue', label: 'Revenue' }],
+}
+
+const selection: ChartSelection<Dim, Mea> = {
+  dimensions: ['month', 'channel'],
+  measures: ['revenue'],
+}
+
+const data: DataRow<Dim, Mea>[] = [
+  { month: 'Jan', channel: 'Web', revenue: 120 },
+  { month: 'Jan', channel: 'Retail', revenue: 80 },
+]
+
+const graphKind: GraphKind = 'bar'
 </script>
 
 <template>
-  <ModelGraphRenderer
-    :model="model"
-    :series="series"
-    type="lineGraph"
+  <ChartRenderer
+    :data="data"
+    :schema="schema"
+    :selection="selection"
+    :graph-kind="graphKind"
+    :encoding="{ showLegend: true }"
   />
 </template>
 ```
 
-Graph components (`<LineGraph>`, `<BarGraph>`, `<ScatterPlot>`) are also available directly.
+Components (`<LineGraph>`, `<BarGraph>`, `<ScatterPlot>`, `<BarGraph3D>`) remain available if you want to pass pre-built `chartData`, but `<ChartRenderer>` is the primary entry point.
+
+---
+
+## **Interactive selection**
+
+```ts
+const explorer = useChartExplorer(schema, {
+  defaultDimensions: ['month'],
+  defaultMeasures: ['revenue'],
+  defaultGraphKind: 'line',
+})
+
+// explorer.selection, explorer.graphKind, explorer.availableGraphKinds, etc.
+```
+
+Bind `explorer.selection` and `explorer.graphKind` to `<ChartRenderer>` for a lightweight chart explorer UI.
 
 ---
 
