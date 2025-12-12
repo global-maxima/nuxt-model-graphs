@@ -35,6 +35,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     charts.BarChart,
     charts.LineChart,
     charts.ScatterChart,
+    charts.HeatmapChart,
     components.GridComponent,
     components.TooltipComponent,
     components.LegendComponent,

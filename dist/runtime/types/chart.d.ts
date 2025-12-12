@@ -25,7 +25,7 @@ interface ChartSelection<D extends string, M extends string> {
     readonly dimensions: D[];
     readonly measures: M[];
 }
-type GraphKind = 'line' | 'bar' | 'scatter' | 'area' | 'bar3d' | 'heatmap';
+type GraphKind = 'line' | 'bar' | 'scatter' | 'area' | 'bar3d' | 'matrix';
 declare function getAvailableGraphKinds(dimCount: number, measureCount: number): GraphKind[];
 interface ColorScale {
     readonly type: 'sequential' | 'diverging' | 'categorical';

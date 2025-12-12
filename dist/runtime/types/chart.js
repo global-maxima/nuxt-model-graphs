@@ -17,7 +17,7 @@ function getAvailableGraphKinds(dimCount, measureCount) {
     if (measureCount > 1) return ["line", "bar"];
   }
   if (dimCount === 2) {
-    if (measureCount === 1) return ["line", "bar", "scatter", "bar3d", "heatmap"];
+    if (measureCount === 1) return ["line", "bar", "scatter", "bar3d", "matrix"];
   }
   return ["bar"];
 }
