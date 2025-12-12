@@ -8,6 +8,9 @@ const props = defineProps({
   chartData: { type: Object, required: true },
   encoding: { type: Object, required: false, default: () => ({}) }
 });
+const showCellLabels = computed(
+  () => props.chartData.xCategories.length <= 10
+);
 const valueDomain = computed(() => {
   const values = props.chartData.data.map(([, , v]) => v);
   if (values.length === 0) return { min: 0, max: 0 };
@@ -16,9 +19,6 @@ const valueDomain = computed(() => {
     max: Math.max(...values)
   };
 });
-const showCellLabels = computed(
-  () => props.chartData.xCategories.length <= 10 
-);
 const chartOptions = computed(() => {
   const { xCategories, yCategories, data, xLabel, yLabel, zLabel } = props.chartData;
   const colors = props.encoding?.colorScale?.colors;
@@ -52,7 +52,7 @@ const chartOptions = computed(() => {
       type: "category",
       data: xCategories,
       name: xLabel,
-      nameLocation: "center",
+      nameLocation: "middle",
       nameGap: 30,
       splitArea: { show: true }
     },
@@ -60,7 +60,7 @@ const chartOptions = computed(() => {
       type: "category",
       data: yCategories,
       name: yLabel,
-      nameLocation: "center",
+      nameLocation: "middle",
       nameGap: 50,
       splitArea: { show: true }
     },
@@ -82,8 +82,10 @@ const chartOptions = computed(() => {
         label: {
           show: showCellLabels.value,
           formatter: (params) => {
-            const v = Array.isArray(params.value) ? params.value[2] : null;
-            return typeof v === "number" ? v.toFixed(2) : v ?? "";
+            const raw = Array.isArray(params.value) ? params.value[2] : params.value;
+            if (raw == null) return "";
+            if (typeof raw === "number") return raw.toFixed(2);
+            return String(raw);
           }
         },
         emphasis: {

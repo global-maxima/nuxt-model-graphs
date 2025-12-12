@@ -37,7 +37,7 @@ const chartOptions = computed(() => {
       type: "category",
       data: categories,
       name: xLabel,
-      nameLocation: "center",
+      nameLocation: "middle",
       nameGap: 25
     } : {
       type: props.encoding?.xAxis?.type ?? "value",

@@ -1,7 +1,7 @@
 {
   "name": "nuxt-model-graphs",
   "configKey": "graphs",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "builder": {
     "@nuxt/module-builder": "1.0.2",
     "unbuild": "unknown"
