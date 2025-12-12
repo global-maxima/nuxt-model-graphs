@@ -1,11 +1,6 @@
 import process from 'node:process';globalThis._importMeta_=globalThis._importMeta_||{url:"file:///_entry.js",env:process.env};import { hasInjectionContext, getCurrentInstance, defineComponent, createElementBlock, shallowRef, provide, cloneVNode, h, inject, computed, unref, shallowReactive, ref, Suspense, Fragment, createApp, watch, toRef, onErrorCaptured, onServerPrefetch, createVNode, resolveDynamicComponent, reactive, effectScope, isReadonly, isRef, isShallow, isReactive, toRaw, defineAsyncComponent, mergeProps, getCurrentScope, withCtx, nextTick, useSSRContext } from 'vue';
 import { i as hasProtocol, k as isScriptProtocol, l as joinURL, w as withQuery, s as sanitizeStatusCode, m as getContext, $ as $fetch, n as createHooks, o as executeAsync, c as createError$1, t as toRouteMatcher, p as createRouter$1, q as defu } from '../nitro/nitro.mjs';
 import { b as baseURL } from '../routes/renderer.mjs';
-import VueECharts from 'vue-echarts';
-import { use } from 'echarts/core';
-import { BarChart, LineChart, ScatterChart } from 'echarts/charts';
-import { TitleComponent, TooltipComponent, GridComponent, LegendComponent } from 'echarts/components';
-import { CanvasRenderer } from 'echarts/renderers';
 import { ssrRenderSuspense, ssrRenderComponent, ssrRenderVNode } from 'vue/server-renderer';
 import 'node:http';
 import 'node:https';
@@ -1770,7 +1765,7 @@ const _routes = [
   {
     name: "index",
     path: "/",
-    component: () => import('./index-B65VwDdl.mjs')
+    component: () => import('./index-m1_XkRTt.mjs')
   }
 ];
 const _wrapInTransition = (props, children) => {
@@ -2149,19 +2144,22 @@ defineComponent({
     };
   }
 });
-use([
-  TitleComponent,
-  TooltipComponent,
-  GridComponent,
-  LegendComponent,
-  CanvasRenderer,
-  BarChart,
-  LineChart,
-  ScatterChart
-]);
-const vue_echarts_SlKUQ8F3LoF6QSuApygcWSCfDvPubSvSTu1mweF9Kcw = /* @__PURE__ */ defineNuxtPlugin((nuxtApp) => {
-  console.log("[nuxt-model-graphs] registering VChart");
-  nuxtApp.vueApp.component("VChart", VueECharts);
+const VChartStub = defineComponent({
+  name: "VChart",
+  inheritAttrs: false,
+  setup(_, { attrs }) {
+    return () => h("div", {
+      id: attrs.id,
+      class: attrs.class,
+      style: attrs.style
+    });
+  }
+});
+const vue_echarts_SlKUQ8F3LoF6QSuApygcWSCfDvPubSvSTu1mweF9Kcw = /* @__PURE__ */ defineNuxtPlugin(async (nuxtApp) => {
+  {
+    nuxtApp.vueApp.component("VChart", VChartStub);
+    return;
+  }
 });
 const plugins = [
   unhead_jUZRegY3s4yFK_g_Osm7uR74JlJwDAQH6Xc8pPQMhBg,
@@ -2436,8 +2434,8 @@ const _sfc_main$1 = {
     const statusMessage = _error.statusMessage ?? (is404 ? "Page Not Found" : "Internal Server Error");
     const description = _error.message || _error.toString();
     const stack = void 0;
-    const _Error404 = defineAsyncComponent(() => import('./error-404-B826Kqpq.mjs'));
-    const _Error = defineAsyncComponent(() => import('./error-500-ZtN0xLcc.mjs'));
+    const _Error404 = defineAsyncComponent(() => import('./error-404-qIjjzF85.mjs'));
+    const _Error = defineAsyncComponent(() => import('./error-500-C7P0OzCq.mjs'));
     const ErrorTemplate = is404 ? _Error404 : _Error;
     return (_ctx, _push, _parent, _attrs) => {
       _push(ssrRenderComponent(unref(ErrorTemplate), mergeProps({ statusCode: unref(statusCode), statusMessage: unref(statusMessage), description: unref(description), stack: unref(stack) }, _attrs), null, _parent));
