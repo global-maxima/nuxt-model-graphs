@@ -16,6 +16,9 @@ const valueDomain = computed(() => {
     max: Math.max(...values)
   };
 });
+const showCellLabels = computed(
+  () => props.chartData.xCategories.length <= 10 
+);
 const chartOptions = computed(() => {
   const { xCategories, yCategories, data, xLabel, yLabel, zLabel } = props.chartData;
   const colors = props.encoding?.colorScale?.colors;
@@ -77,7 +80,7 @@ const chartOptions = computed(() => {
         type: "heatmap",
         data,
         label: {
-          show: true,
+          show: showCellLabels.value,
           formatter: (params) => {
             const v = Array.isArray(params.value) ? params.value[2] : null;
             return typeof v === "number" ? v.toFixed(2) : v ?? "";

@@ -51,7 +51,7 @@ const chartOptions = computed<EChartsOption>(() => {
           type: 'category',
           data: categories,
           name: xLabel,
-          nameLocation: 'center',
+          nameLocation: 'middle',
           nameGap: 25,
         }
       : {

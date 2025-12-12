@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { EChartsOption } from 'echarts'
+import type { DefaultLabelFormatterCallbackParams, EChartsOption } from 'echarts'
 import type { ChartData3D, VisualEncoding } from '../../types/chart'
 
 const props = withDefaults(
@@ -15,6 +15,10 @@ const props = withDefaults(
   {
     encoding: () => ({}),
   }
+)
+
+const showCellLabels = computed(() =>
+  props.chartData.xCategories.length <= 10 
 )
 
 const valueDomain = computed(() => {
@@ -52,7 +56,7 @@ const chartOptions = computed<EChartsOption>(() => {
       type: 'category',
       data: xCategories,
       name: xLabel,
-      nameLocation: 'center',
+      nameLocation: 'middle',
       nameGap: 30,
       splitArea: { show: true },
     },
@@ -60,7 +64,7 @@ const chartOptions = computed<EChartsOption>(() => {
       type: 'category',
       data: yCategories,
       name: yLabel,
-      nameLocation: 'center',
+      nameLocation: 'middle',
       nameGap: 50,
       splitArea: { show: true },
     },
@@ -80,10 +84,15 @@ const chartOptions = computed<EChartsOption>(() => {
         type: 'heatmap',
         data,
         label: {
-          show: true,
-          formatter: (params) => {
-            const v = Array.isArray(params.value) ? params.value[2] : null
-            return typeof v === 'number' ? v.toFixed(2) : v ?? ''
+          show: showCellLabels.value,
+          formatter: (params: DefaultLabelFormatterCallbackParams): string => {
+            const raw = Array.isArray(params.value)
+              ? params.value[2]
+              : params.value
+
+            if (raw == null) return ''
+            if (typeof raw === 'number') return raw.toFixed(2)
+            return String(raw)
           },
         },
         emphasis: {
